@@ -51,7 +51,7 @@
   }
 
   .pitari-text {
-    font-size: 2.6rem;
+    font-size: 2.4rem;
     font-weight: 900;
     background: linear-gradient(90deg, #ff0000, #ff8800, #ffdd00, #00cc44, #38b6ff, #6644ff, #cc00cc, #ff0000);
     background-size: 200% 100%;
@@ -347,8 +347,10 @@
   <input type="number" id="inputManual" placeholder="例: 1234">
   <label>ニアピン賞間隔（○人ごと）</label>
   <input type="number" id="inputMilestone" placeholder="100" value="100">
-  <label>ニアピン賞確率テキスト（±の値）</label>
-  <input type="text" id="inputPitariOdds" placeholder="0.01" value="0.01">
+  <label>ニアピン賞 現在の値（±）</label>
+  <input type="text" id="inputPitariFrom" placeholder="0.01" value="0.01">
+  <label>ニアピン賞 次の値（±）</label>
+  <input type="text" id="inputPitariTo" placeholder="0.03" value="0.03">
   <button onclick="saveSettings()">保存して閉じる</button>
   <p class="note">設定はブラウザに保存されます（Sキーで開閉）</p>
 </div>
@@ -379,7 +381,8 @@
   let gasUrl = localStorage.getItem('gasUrl') || '';
   let currentCount = 0;
   let milestoneInterval = parseInt(localStorage.getItem('milestoneInterval') || '100', 10);
-  let pitariOdds = localStorage.getItem('pitariOdds') || '0.01';
+  let pitariFrom = localStorage.getItem('pitariFrom') || '0.01';
+  let pitariTo = localStorage.getItem('pitariTo') || '0.03';
   let prevCount = 0;
 
   function buildSlots() {
@@ -449,7 +452,7 @@
     const nextMilestone = Math.ceil((currentCount + 1) / milestoneInterval) * milestoneInterval;
     const remaining = nextMilestone - currentCount;
     document.getElementById('pitariText').textContent =
-      `${nextMilestone.toLocaleString()}人達成でニアピン賞 ±${pitariOdds} にアップ！`;
+      `${nextMilestone.toLocaleString()}人達成でニアピン賞 ±${pitariFrom} → ±${pitariTo} にアップ！`;
     document.getElementById('remainingText').textContent =
       `あと ${remaining.toLocaleString()}人！`;
   }
@@ -539,10 +542,12 @@
     const url = document.getElementById('inputUrl').value.trim();
     const manual = document.getElementById('inputManual').value.trim();
     const milestone = document.getElementById('inputMilestone').value.trim();
-    const odds = document.getElementById('inputPitariOdds').value.trim();
+    const from = document.getElementById('inputPitariFrom').value.trim();
+    const to = document.getElementById('inputPitariTo').value.trim();
     if (url) { localStorage.setItem('gasUrl', url); gasUrl = url; }
     if (milestone) { milestoneInterval = parseInt(milestone, 10) || 100; localStorage.setItem('milestoneInterval', String(milestoneInterval)); }
-    if (odds) { pitariOdds = odds; localStorage.setItem('pitariOdds', odds); }
+    if (from) { pitariFrom = from; localStorage.setItem('pitariFrom', from); }
+    if (to) { pitariTo = to; localStorage.setItem('pitariTo', to); }
     if (manual) {
       currentCount = parseInt(manual, 10);
       setSlotValue(currentCount, true);
@@ -569,9 +574,11 @@
     buildSlots();
     const savedUrl = localStorage.getItem('gasUrl');
     const savedMilestone = localStorage.getItem('milestoneInterval');
-    const savedOdds = localStorage.getItem('pitariOdds');
+    const savedFrom = localStorage.getItem('pitariFrom');
+    const savedTo = localStorage.getItem('pitariTo');
     if (savedMilestone) { milestoneInterval = parseInt(savedMilestone, 10); document.getElementById('inputMilestone').value = milestoneInterval; }
-    if (savedOdds) { pitariOdds = savedOdds; document.getElementById('inputPitariOdds').value = pitariOdds; }
+    if (savedFrom) { pitariFrom = savedFrom; document.getElementById('inputPitariFrom').value = pitariFrom; }
+    if (savedTo) { pitariTo = savedTo; document.getElementById('inputPitariTo').value = pitariTo; }
     if (savedUrl) {
       document.getElementById('inputUrl').value = savedUrl; gasUrl = savedUrl;
       fetchData(); setInterval(fetchData, POLL_INTERVAL); window._polling = true;
