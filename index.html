@@ -378,7 +378,8 @@
   const DIGIT_COUNT = 4;
   const CELL_HEIGHT = 220;
 
-  let gasUrl = localStorage.getItem('gasUrl') || '';
+  const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbwJtXOe-OcpJc_k3Nxd6coRTEVNB25Jw82mQXMBu6ePYp0tvXDery8O-rwNv9GiKLxw/exec';
+  let gasUrl = localStorage.getItem('gasUrl') || DEFAULT_GAS_URL;
   let currentCount = 0;
   let milestoneInterval = parseInt(localStorage.getItem('milestoneInterval') || '100', 10);
   let pitariFrom = localStorage.getItem('pitariFrom') || '0.01';
@@ -579,14 +580,8 @@
     if (savedMilestone) { milestoneInterval = parseInt(savedMilestone, 10); document.getElementById('inputMilestone').value = milestoneInterval; }
     if (savedFrom) { pitariFrom = savedFrom; document.getElementById('inputPitariFrom').value = pitariFrom; }
     if (savedTo) { pitariTo = savedTo; document.getElementById('inputPitariTo').value = pitariTo; }
-    if (savedUrl) {
-      document.getElementById('inputUrl').value = savedUrl; gasUrl = savedUrl;
-      fetchData(); setInterval(fetchData, POLL_INTERVAL); window._polling = true;
-    } else {
-      setSlotValue(0, false); updatePitariText();
-      document.getElementById('settingsPanel').classList.add('open');
-      setStatus('loading', 'GAS URLを設定してください');
-    }
+    document.getElementById('inputUrl').value = gasUrl;
+    fetchData(); setInterval(fetchData, POLL_INTERVAL); window._polling = true;
   });
 </script>
 
